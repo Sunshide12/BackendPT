@@ -72,7 +72,7 @@ class ClientController extends Controller
     {
         if ($client->orders()->count() > 0) {
         return response()->json([
-            'message' => 'You cannot delete a client with associated products.',
+            'message' => 'You cannot delete a client with associated orders.',
             'status'  => 422,
         ], 422);
     }

@@ -15,5 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $_e) {
+            return response()->json([
+                'message' => 'Register not found',
+                'status'  => 404,
+            ], 404);
+});
     })->create();
