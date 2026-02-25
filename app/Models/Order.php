@@ -18,5 +18,8 @@ class Order extends Model
     }
 
     // Un pedido tiene muchos detalles
-
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
 }

@@ -18,5 +18,8 @@ class Product extends Model
     }
 
     // Un producto puede estar en muchos detalles de pedido
-    
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }    
 }

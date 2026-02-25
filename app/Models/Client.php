@@ -11,5 +11,8 @@ class Client extends Model
     protected $fillable = ['name', 'email', 'phone'];
 
         // Un cliente puede tener muchos pedidos
-
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }
