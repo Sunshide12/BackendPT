@@ -18,5 +18,8 @@ class OrderDetail extends Model
     }
 
     // Un detalle pertenece a un producto
-
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 }
