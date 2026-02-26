@@ -202,21 +202,22 @@ Las migraciones crean 5 tablas con sus relaciones. El seeder carga datos de prue
 ```
 app/
 ├── Http/Controllers/
-│   ├── CategoryController.php
-│   ├── ProductController.php
-│   ├── ClientController.php
-│   ├── OrderController.php
-│   └── InventoryController.php
+│   ├── CategoryController.php   # CRUD de categorías — sin paginación, impide borrar si tiene productos asociados
+│   ├── ProductController.php    # CRUD de productos — búsqueda por nombre, filtro por categoría, paginación de 10
+│   ├── ClientController.php     # CRUD de clientes — búsqueda por nombre/email, paginación + endpoint /all sin paginar para dropdowns
+│   ├── OrderController.php      # CRUD de pedidos — crea con DB::transaction, valida stock, descuenta inventario, restaura stock al cancelar/eliminar
+│   └── InventoryController.php  # Listado de productos ordenado por stock + ajuste manual de stock (PATCH)
 ├── Models/
-│   ├── Category.php
-│   ├── Product.php
-│   ├── Client.php
-│   ├── Order.php
-│   └── OrderDetail.php
+│   ├── Category.php             # hasMany(Product) — campos: name
+│   ├── Product.php              # belongsTo(Category), hasMany(OrderDetail) — campos: name, price, stock, category_id
+│   ├── Client.php               # hasMany(Order) — campos: name, email, phone
+│   ├── Order.php                # belongsTo(Client), hasMany(OrderDetail) — campos: client_id, date, total, status
+│   └── OrderDetail.php          # belongsTo(Order), belongsTo(Product) — campos: order_id, product_id, quantity, unit_price, subtotal
 database/
-├── migrations/
-├── factories/
-└── seeders/
+├── migrations/                  # Tablas en orden: categories → products → clients → orders → order_details
+├── factories/                   # Factories para Category, Client, Product y Order (con Faker)
+└── seeders/                     # Seeders individuales por modelo + DatabaseSeeder que los orquesta
 routes/
-└── api.php
+└── api.php                      # 4 apiResource (categories, products, clients, orders) + 2 rutas manuales para inventario + 1 para clients/all
+
 ```
