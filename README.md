@@ -1,12 +1,16 @@
 # Backend — Sistema de Gestión de Pedidos
 
-API REST desarrollada con Laravel 12 para la gestión de productos, clientes, inventario y pedidos.
+API REST desarrollada con Laravel 12 para gestionar productos, clientes, inventario y pedidos. Expone endpoints JSON que consume el frontend en React.
+
+---
 
 ## Stack
 
-- **Laravel 12** + PHP 8.5
-- **MySQL** (prueba_tecnica)
-- **Eloquent ORM**
+![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+
+---
 
 ## Requisitos
 
@@ -14,17 +18,24 @@ API REST desarrollada con Laravel 12 para la gestión de productos, clientes, in
 - Composer
 - MySQL
 
+---
+
 ## Instalación
 
 ```bash
+# 1. Clonar el repositorio
 git clone https://github.com/Sunshide12/BackendPT.git
 cd BackendPT
+
+# 2. Instalar dependencias
 composer install
+
+# 3. Configurar el entorno
 cp .env.example .env
 php artisan key:generate
 ```
 
-Configura la base de datos en `.env`:
+Editar el `.env` con los datos de tu base de datos:
 
 ```env
 DB_CONNECTION=mysql
@@ -35,63 +46,156 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Crea la base de datos en MySQL:
+Crear la base de datos en MySQL:
 
 ```sql
 CREATE DATABASE prueba_tecnica;
 ```
 
+Correr las migraciones con datos de prueba:
+
 ```bash
 php artisan migrate --seed
+```
+
+Iniciar el servidor:
+
+```bash
 php artisan serve
 ```
 
-El servidor queda disponible en `http://localhost:8000`.
+La API queda disponible en `http://localhost:8000/api`.
+
+---
 
 ## Base de datos
 
-Las migraciones crean 5 tablas con sus relaciones:
+Las migraciones crean 5 tablas con sus relaciones. El seeder carga datos de prueba para poder usar el sistema de inmediato.
 
-| Tabla         | Registros seeder |
-| ------------- | ---------------- |
-| categories    | 10               |
-| products      | 50               |
-| clients       | 30               |
-| orders        | 40               |
-| order_details | ~100             |
+### categories
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| id | bigint PK | |
+| name | string | Nombre de la categoría |
+| created_at / updated_at | timestamp | |
+
+### products
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| id | bigint PK | |
+| name | string | Nombre del producto |
+| price | decimal(10,2) | Precio unitario |
+| stock | integer | Stock disponible (default 0) |
+| category_id | FK → categories | Restricción: no se puede eliminar la categoría si tiene productos |
+| created_at / updated_at | timestamp | |
+
+### clients
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| id | bigint PK | |
+| name | string | Nombre completo |
+| email | string unique | Correo electrónico |
+| phone | string | Teléfono (max 20 caracteres) |
+| created_at / updated_at | timestamp | |
+
+### orders
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| id | bigint PK | |
+| client_id | FK → clients | Se elimina en cascada si se borra el cliente |
+| date | date | Fecha del pedido |
+| total | decimal(10,2) | Total calculado automáticamente |
+| status | enum | `pending`, `completed`, `cancelled` (default: pending) |
+| created_at / updated_at | timestamp | |
+
+### order_details
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| id | bigint PK | |
+| order_id | FK → orders | Se elimina en cascada si se borra el pedido |
+| product_id | FK → products | Se elimina en cascada si se borra el producto |
+| quantity | integer | Cantidad pedida |
+| unit_price | decimal(10,2) | Precio al momento del pedido |
+| subtotal | decimal(10,2) | quantity × unit_price |
+| created_at / updated_at | timestamp | |
+
+### Datos de prueba (seeders)
+
+| Tabla         | Registros |
+|---------------|-----------|
+| categories    | 10        |
+| products      | 50        |
+| clients       | 30        |
+| orders        | 40        |
+| order_details | ~100      |
+
+---
 
 ## Endpoints
 
-| Método | Endpoint                             | Descripción                            |
-| ------ | ------------------------------------ | -------------------------------------- |
-| GET    | `/api/categories`                    | Listar categorías                      |
-| POST   | `/api/categories`                    | Crear categoría                        |
-| PUT    | `/api/categories/{id}`               | Actualizar categoría                   |
-| DELETE | `/api/categories/{id}`               | Eliminar categoría                     |
-|        |                                      |                                        |
-| GET    | `/api/products?search=&category_id=` | Listar productos con filtros           |
-| POST   | `/api/products`                      | Crear producto                         |
-| PUT    | `/api/products/{id}`                 | Actualizar producto                    |
-| DELETE | `/api/products/{id}`                 | Eliminar producto                      |
-|        |                                      |                                        |
-| GET    | `/api/clients?search=`               | Listar clientes                        |
-| POST   | `/api/clients`                       | Crear cliente                          |
-| PUT    | `/api/clients/{id}`                  | Actualizar cliente                     |
-| DELETE | `/api/clients/{id}`                  | Eliminar cliente                       |
-|        |                                      |                                        |
-| GET    | `/api/inventory?search=`             | Ver existencias ordenadas por stock    |
-| PATCH  | `/api/inventory/{id}`                | Ajustar stock manualmente              |
-| GET    | `/api/orders`                        | Listar pedidos con cliente y productos |
-| POST   | `/api/orders`                        | Registrar pedido                       |
-| PUT    | `/api/orders/{id}`                   | Actualizar status del pedido           |
-| DELETE | `/api/orders/{id}`                   | Eliminar pedido                        |
+### Categorías
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/categories` | Listar todas |
+| POST | `/api/categories` | Crear |
+| PUT | `/api/categories/{id}` | Actualizar |
+| DELETE | `/api/categories/{id}` | Eliminar |
+
+### Productos
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/products?search=&category_id=` | Listar con filtros |
+| POST | `/api/products` | Crear |
+| PUT | `/api/products/{id}` | Actualizar |
+| DELETE | `/api/products/{id}` | Eliminar |
+
+### Clientes
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/clients?search=` | Listar |
+| GET | `/api/clients/all` | Todos sin paginación (para dropdowns) |
+| POST | `/api/clients` | Crear |
+| PUT | `/api/clients/{id}` | Actualizar |
+| DELETE | `/api/clients/{id}` | Eliminar |
+
+### Inventario
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/inventory?search=` | Ver existencias |
+| PATCH | `/api/inventory/{id}` | Ajustar stock manualmente |
+
+### Pedidos
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/orders` | Listar con cliente y productos |
+| POST | `/api/orders` | Registrar pedido |
+| PUT | `/api/orders/{id}` | Actualizar estado |
+| DELETE | `/api/orders/{id}` | Eliminar pedido |
+
+---
 
 ## Lógica de negocio
 
-- Al registrar un pedido se valida stock disponible y se descuenta automáticamente del inventario.
-- Al cancelar o eliminar un pedido el stock se restaura.
-- No se puede eliminar una categoría con productos asociados ni un cliente con pedidos activos.
-- Los pedidos cancelados no pueden ser modificados.
+### Pedidos
+- Si se repite el mismo producto en varios ítems, las cantidades se agrupan antes de validar el stock.
+- Si el stock es insuficiente para cualquier producto, la transacción completa se cancela y no se crea nada.
+- El total se calcula automáticamente sumando `precio × cantidad` de cada producto.
+- Al cancelar un pedido, el stock de todos los productos involucrados se restaura automáticamente.
+- Al eliminar un pedido, el stock también se restaura sin importar el estado en que estaba.
+
+### Inventario
+- El stock se puede ajustar manualmente desde el módulo de inventario.
+- El valor mínimo permitido es 0, no se acepta stock negativo.
+
+### Categorías
+- No se puede eliminar una categoría que tenga productos asociados (devuelve 422).
+
+### Clientes
+- No se puede eliminar un cliente que tenga pedidos registrados (devuelve 422).
+- El email debe ser único por cliente.
+- El teléfono tiene un máximo de 20 caracteres.
+
+---
 
 ## Estructura del proyecto
 
