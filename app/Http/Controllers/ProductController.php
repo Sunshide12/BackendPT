@@ -29,6 +29,23 @@ class ProductController extends Controller
         ]);
     }
 
+    public function all(Request $request)
+    {
+        $query = Product::with('category');
+
+        if ($request->has('search') && $request->search !== '') {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $products = $query->orderBy('name')->get();
+
+        return response()->json([
+            'products' => $products,
+            'message'  => 'Products retrieved successfully',
+            'status'   => 200,
+        ]);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
