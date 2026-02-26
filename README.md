@@ -68,14 +68,17 @@ Las migraciones crean 5 tablas con sus relaciones:
 | POST   | `/api/categories`                    | Crear categoría                        |
 | PUT    | `/api/categories/{id}`               | Actualizar categoría                   |
 | DELETE | `/api/categories/{id}`               | Eliminar categoría                     |
+|        |                                      |                                        |
 | GET    | `/api/products?search=&category_id=` | Listar productos con filtros           |
 | POST   | `/api/products`                      | Crear producto                         |
 | PUT    | `/api/products/{id}`                 | Actualizar producto                    |
 | DELETE | `/api/products/{id}`                 | Eliminar producto                      |
+|        |                                      |                                        |
 | GET    | `/api/clients?search=`               | Listar clientes                        |
 | POST   | `/api/clients`                       | Crear cliente                          |
 | PUT    | `/api/clients/{id}`                  | Actualizar cliente                     |
 | DELETE | `/api/clients/{id}`                  | Eliminar cliente                       |
+|        |                                      |                                        |
 | GET    | `/api/inventory?search=`             | Ver existencias ordenadas por stock    |
 | PATCH  | `/api/inventory/{id}`                | Ajustar stock manualmente              |
 | GET    | `/api/orders`                        | Listar pedidos con cliente y productos |
