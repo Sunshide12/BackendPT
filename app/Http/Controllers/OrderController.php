@@ -129,9 +129,13 @@ class OrderController extends Controller
 
     public function destroy(Order $order)
     {
-        // Siempre devolvemos el stock al eliminar, sin importar el status
-        foreach ($order->orderDetails as $detail) {
-            $detail->product->increment('stock', $detail->quantity);
+        // Solo restauramos stock si el pedido estaba pendiente
+        // completed = ya fue entregado, el stock no vuelve
+        // cancelled = el stock ya fue restaurado cuando se canceló
+        if ($order->status === 'pending') {
+            foreach ($order->orderDetails as $detail) {
+                $detail->product->increment('stock', $detail->quantity);
+            }
         }
     
         $order->delete();
