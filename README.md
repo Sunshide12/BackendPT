@@ -52,6 +52,12 @@ Crear la base de datos en MySQL:
 CREATE DATABASE prueba_tecnica;
 ```
 
+Verificar que la base de datos MySQL está activa:
+
+```sql
+Puede ser en laragon xamp etc.
+```
+
 Correr las migraciones con datos de prueba:
 
 ```bash
