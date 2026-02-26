@@ -7,6 +7,8 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\InventoryController;
 
+Route::get('clients/all', [ClientController::class, 'all']); // Devuelve todos los clientes
+
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('products', ProductController::class);
 Route::apiResource('clients', ClientController::class);

@@ -42,6 +42,25 @@ class ClientController extends Controller
         ], 201);
     }
 
+    public function all(Request $request)
+    {   
+        /*Devuelve todos los clientes para que al momento de crear un nuevo pedido y seleccionar
+        al cliente, muestre todos los clientes que hay */
+        $query = Client::query();
+
+        if ($request->has('search') && $request->search !== '') {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $clients = $query->orderBy('name')->get();
+
+        return response()->json([
+            'clients' => $clients,
+            'message' => 'Clients retrieved successfully',
+            'status'  => 200,
+        ]);
+    }
+
     public function show(Client $client)
     {
         return response()->json([
