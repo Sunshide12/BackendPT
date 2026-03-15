@@ -30,7 +30,9 @@ class ClientController extends Controller
         $request->validate([
             'name'  => 'required|string|max:255',
             'email' => 'required|email|unique:clients,email',
-            'phone' => 'required|string|max:20',
+            'phone' => ['required', 'string', 'regex:/^\d{3}-\d{3}-\d{4}$/'],
+        ], [
+            'phone.regex' => 'The phone must have the format 000-000-0000',
         ]);
 
         $client = Client::create($request->only('name', 'email', 'phone')); //Se filtra el request y solo deja pasar esos 3 campos
