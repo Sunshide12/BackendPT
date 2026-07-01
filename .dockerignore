@@ -1,0 +1,25 @@
+.git
+.gitignore
+.gitattributes
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Storage (se monta como volumen)
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+
+# Test y docs
+# tests
+# README.md
+# phpunit.xml
+
+# Docker files (no necesarios dentro del contenedor)
+docker-compose.yml
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+# docker/ ← NO excluir: contiene nginx.conf y supervisord.conf que necesita el build
