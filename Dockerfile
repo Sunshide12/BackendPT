@@ -10,8 +10,10 @@ RUN apk add --no-cache \
         libzip-dev \
         oniguruma-dev \
         icu-dev \
+        postgresql-dev \
     && docker-php-ext-install -j$(nproc) \
         pdo_mysql \
+        pdo_pgsql \
         mbstring \
         zip \
         gd \
