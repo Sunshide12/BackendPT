@@ -41,10 +41,8 @@ RUN composer install \
 COPY . .
 
 # ── 3) Autoloader final + optimizaciones ──────────────────────────────────────
+# Solo el autoloader → las caches se generan en runtime con las vars reales
 RUN composer dump-autoload --optimize \
-    && php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache \
     && chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache
 
@@ -56,5 +54,8 @@ COPY docker/supervisord.conf /etc/supervisord.conf
 
 EXPOSE 8000
 
-# Reemplaza __PORT__ en nginx por la variable $PORT de Vercel (o 8000 por defecto) y arranca
-CMD sed -i "s/__PORT__/${PORT:-8000}/g" /etc/nginx/http.d/default.conf && /usr/bin/supervisord -c /etc/supervisord.conf
+# Script de arranque: aplica el puerto dinámico, caches de Laravel con vars reales, y lanza supervisor
+COPY docker/start.sh /start.sh
+RUN chmod +x /start.sh
+
+CMD ["/start.sh"]
