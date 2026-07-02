@@ -12,5 +12,7 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
+php artisan db:seed
+
 # ── 4. Lanzar Supervisor (nginx + php-fpm) ────────────────────────────────────
 exec /usr/bin/supervisord -c /etc/supervisord.conf
